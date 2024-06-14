@@ -27,8 +27,8 @@
 /*------------------------------------------------------------------------------*/
 /* Define MACRO */
 /*------------------------------------------------------------------------------*/
-#ifndef PCA9685_CONTROLLE_HPP_
-#define PCA9685_CONTROLLE_HPP_
+#ifndef PCA9685_COMPONENT_HPP_
+#define PCA9685_COMPONENT_HPP_
 
 /*------------------------------------------------------------------------------*/
 /* Include */
@@ -65,4 +65,4 @@ private:
     int map(int degree);
 };
 
-#endif /* PCA9685_CONTROLLER_HPP_ */
+#endif /* PCA9685_COMPONENTR_HPP_ */

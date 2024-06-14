@@ -36,6 +36,7 @@ You should see an entry of 0x40 and 0x41, which is the default address of the PC
 You must have root permission to use the I2C bus, ie you must use sudo. To run the example:
 
 ```sh
+colcon build --packages-select pca9685_ros2
 . install/setup.bash
 ros2 run pca9685_ros2 controller
 ```
