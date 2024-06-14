@@ -126,15 +126,3 @@ int Controller::map (int degree) {
 	return servoMiddle;
     }
 }
-
-/*------------------------------------------------------------------------------*/
-/* main rclcpp node */
-/*------------------------------------------------------------------------------*/
-int main(int argc, char **argv)
-{
-    rclcpp::init(argc, argv);
-    auto controller_node = std::make_shared<Controller>();
-    rclcpp::spin(controller_node);
-    rclcpp::shutdown();
-    return 0;
-}
