@@ -1,16 +1,52 @@
-#include <JHPWMPCA9685.h>
+// MIT License
+
+// Copyright (c) 2024 Takumi Asada
+// Copyright (c) 2019 Pushkal Katara
+// Copyright (c) 2015 Jetsonhacks
+
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
+/*------------------------------------------------------------------------------*/
+/* Include */
+/*------------------------------------------------------------------------------*/
+#include <pca9685_ros2/JHPWMPCA9685.h>
 #include <math.h>
 
- PCA9685::PCA9685(int address) {
-    kI2CBus = 0 ;           // Default I2C bus for Jetson TK1
-    kI2CAddress = address ; // Defaults to 0x40 for PCA9685 ; jumper settable
+/*------------------------------------------------------------------------------*/
+/* Constructor */
+/*------------------------------------------------------------------------------*/
+PCA9685::PCA9685(int address, int i2c_bus) {
+    kI2CBus = i2c_bus;           // Default I2C bus for Jetson TK1
+    kI2CAddress = address ;      // Defaults to 0x40 for PCA9685 ; jumper settable
     error = 0 ;
 }
 
+/*------------------------------------------------------------------------------*/
+/* Destructor */
+/*------------------------------------------------------------------------------*/
 PCA9685::~PCA9685() {
     closePCA9685() ;
 }
 
+/*------------------------------------------------------------------------------*/
+/* Function */
+/*------------------------------------------------------------------------------*/
 bool PCA9685::openPCA9685()
 {
     char fileNameBuffer[32];
@@ -50,8 +86,6 @@ void PCA9685::reset () {
 void PCA9685::setPWMFrequency ( float frequency ) {
     printf("Setting PCA9685 PWM frequency to %f Hz\n",frequency) ;
     float rangedFrequency = fmin(fmax(frequency,40),1000) ;
-    rangedFrequency *= 0.9 ;   // Correct for overshoot on PCA9685; The method
-                               // described in the datasheet overshoots by 1/0.9
     int prescale = (int)(25000000.0f / (4096 * rangedFrequency) - 0.5f) ;
     // For debugging
     // printf("PCA9685 Prescale: 0x%02X\n",prescale) ;
@@ -80,7 +114,6 @@ void PCA9685::setAllPWM (int onValue, int offValue) {
     writeByte(PCA9685_ALL_LED_OFF_L, offValue & 0xFF) ;
     writeByte(PCA9685_ALL_LED_OFF_H, offValue >> 8) ;
 }
-
 
 // Read the given register
 int PCA9685::readByte(int readRegister)

@@ -26,13 +26,17 @@ SOFTWARE.
 #define _JHPWMPCA9685_H
 
 #include <cstddef>
-#include <linux/i2c-dev.h>
 #include <sys/ioctl.h>
 #include <cstdlib>
 #include <cstdio>
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
+
+extern "C" {
+#include <linux/i2c-dev.h>
+#include <i2c/smbus.h>
+}
 
 class PCA9685
 {
@@ -41,7 +45,7 @@ public:
     int kI2CFileDescriptor ;        // File Descriptor to the PCA9685
     int kI2CAddress ;               // Address of PCA9685; defaults to 0x40
     int error ;
-    PCA9685(int address=0x40);
+    PCA9685(int address = 0x40, int i2c_bus = 1);
     ~PCA9685() ;
     bool openPCA9685() ;
     void closePCA9685();
