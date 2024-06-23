@@ -29,6 +29,7 @@
 /*------------------------------------------------------------------------------*/
 #ifndef PCA9685_COMPONENT_HPP_
 #define PCA9685_COMPONENT_HPP_
+#define CHANNEL_SIZE 16
 
 /*------------------------------------------------------------------------------*/
 /* Include */
@@ -36,6 +37,7 @@
 #include <memory>
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/float32.hpp>
+#include <sensor_msgs/msg/joint_state.hpp>
 #include <pca9685_ros2/JHPWMPCA9685.h>
 
 /*------------------------------------------------------------------------------*/
@@ -52,17 +54,36 @@ public:
     int servoMiddle = 300;
     int bus = 1; // bus 1 (pin 3 and pin 5)
     int frequency = 50; // default 50 Hz
+
+    float angle_limit = 45.0;
+    float rviz_convert_40 = 0.698;
+    float rviz_convert_45 = 0.785;
+    float rviz_param[CHANNEL_SIZE+1] = {};  /* Convert to Joint msg to Rviz 2 param */
+    float offset_param[CHANNEL_SIZE+1] = {};  /* Offset parameter of Servo */
+
     PCA9685 *controller;
-	PCA9685 *controller_2;
-	float error = 5;
+    PCA9685 *controller_2;
 
     void init(PCA9685 *controller);
-    void angle(PCA9685 *controller, int channel, float angle, float angle_error);
+    void angle(PCA9685 *controller, int channel, float angle, float angle_offset);
     void dcdriver(PCA9685 *controller, int in_1, int in_2, int speed, bool direction);
 
 private:
     // map degrees to the servo value
     int map(int degree);
+    /* Callback Function */
+    void joint_cb(const sensor_msgs::msg::JointState::SharedPtr msg);
+    void lumen_cb(const std_msgs::msg::Float32::SharedPtr msg);
+    void led_cb(const std_msgs::msg::Float32::SharedPtr msg);
+    void dcdriverA_cb(const std_msgs::msg::Float32::SharedPtr msg);
+    void dcdriverB_cb(const std_msgs::msg::Float32::SharedPtr msg);
+
+    rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr joint_sub_;
+    rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr lumen_sub_;
+    rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr led_sub_;
+    rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr dcdriverA_sub_;
+    rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr dcdriverB_sub_;
+
 };
 
 #endif /* PCA9685_COMPONENTR_HPP_ */
